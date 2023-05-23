@@ -1,0 +1,500 @@
+#include <iostream>
+#include <conio.h>
+#include <string.h>
+#include <string>
+#include <fstream>
+#include <stdlib.h>// funcione new y delete
+#include <vector>
+#include <wchar.h>
+#include <math.h>
+
+using namespace std;
+
+struct tienda
+{
+	string articulo, descripcion, caracteristicas, clasificacion, genero, consola, status;
+	int numero, anio;
+	float total, precio;
+};
+
+int alta2;
+string buscador; //sirve en lista
+
+tienda* articulos; //uso de punteros
+
+void alta();
+void lista();
+void modificar();
+void eliminar();
+void archivos();
+
+int main()
+{
+	int opc;
+	printf("\t \t \t \t \t    %c %c %c VIDEOJUEGOS Y MAS %c %c %c \n", 175, 175, 175, 174, 174, 174);
+	printf("Elige una opci%cn escogiendo un n%cmero del 1 al 6: \n", 162, 163);
+	printf("1.-Alta. \n2.-Mostrar lista. \n3.-Limpiar pantalla. \n4.-Modificar. \n5.-Eliminar. \n6.-Salir. \n");
+	scanf_s("%d", &opc);
+
+	switch (opc)
+	{
+	case 1:
+		alta();
+		return main();
+		break;
+
+	case 2:
+		lista();
+		return main();
+		break;
+
+	case 3:
+		system("cls"); //system("clear");
+		return main();
+		break;
+
+	case 4:
+		modificar();
+		return main();
+		break;
+
+	case 5:
+		eliminar();
+		return main();
+		break;
+
+	case 6:
+		archivos();
+		break;
+
+	default:
+		printf("No existe. Vuelve a intentar.");
+		break;
+	}
+}
+
+
+void alta() //dar de alta
+{
+	printf("%cCu%cntos registros desea dar de alta? \n", 168, 160);
+	scanf_s("%d", &alta2);
+	articulos = new tienda[alta2]; // uso de new para hacer el arreglo dinamico
+	for (int i = 0; i < alta2; i++)
+	{
+		printf("Ingrese n%cmero del art%cculo.\n", 163, 161);
+		scanf_s("%d", &articulos[i].numero); // numero art
+		
+		while (getchar() != '\n'); //se vacia el buffer o el espacio o cin.ignore
+
+		printf("Ingrese nombre del art%cculo.\n", 161);
+		getline(cin, articulos[i].articulo); //nombre articulo 
+
+		printf("Ingrese a%co de lanzamiento del art%cculo.\n", 164, 161);
+		scanf_s("%d", &articulos[i].anio); // año
+
+		while (getchar() != '\n');
+
+		printf("Ingrese g%cnero.\n", 130);
+		getline(cin, articulos[i].genero);//genero
+
+		printf("Ingrese clasificaci%cn.\n", 162);
+		getline(cin, articulos[i].clasificacion); //clasificación
+
+		printf("Ingrese consola.\n");
+		getline(cin, articulos[i].consola); // nombre de la consola
+
+		printf("Ingrese caracter%csticas.\n", 161);
+		getline(cin, articulos[i].caracteristicas); //caracteristicas del art
+
+		printf("Ingrese descripci%cn del art%cculo.\n", 162, 161);
+		getline(cin, articulos[i].descripcion); //descripcion del articulo
+
+		printf("Ingrese precio unitario del art%cculo.\n", 161);
+		scanf_s("%f", &articulos[i].precio); //precio sin iva
+
+		articulos[i].total = (articulos[i].precio * .16) + articulos[i].precio;
+
+		printf("El precio total es: \n%.2f \n", articulos[i].total);
+	}
+}
+
+void lista() //mostrar lista
+{
+	int opcionnueva, valor;
+
+	printf("%cDesea buscar mediante...? \n1.-Uso de filtros. \n2.-Mostrar todo sin etiquetas.\n", 168);
+	scanf_s("%d", &opcionnueva);
+
+	if (opcionnueva == 1)
+	{
+		printf("Desea buscar por... \n1.-G%cnero. \n2.-Clasificaci%cn. \n3.-Consola.\n", 130, 162);
+		scanf_s("%d", &valor);
+		if (valor == 1)
+		{
+			while (getchar() != '\n');
+
+			//Pide el genero a buscar
+			printf("\nIngrese g%cnero que desea buscar: \n", 130);
+			getline(cin, buscador);
+
+			printf("Lista de art%cculos: \n", 161);
+
+			for (int i = 0; i < alta2; i++) //es hasta el numero de veces que dio de alta el usuario
+			{
+				if (strcmp(buscador.c_str(), articulos[i].genero.c_str()) == 0) //compara las cadenas
+				{
+					if (articulos[i].status == "ELIMINADO") // checamos si el status fue eliminado
+					{
+						printf("REGISTRO ELIMINADO %d. \n", i + 1);
+					}
+					else
+					{
+						printf("Registro %d. \n", i + 1);
+
+						printf("N%cmero del art%cculo: \n%d \n", 163, 161, articulos[i].numero);
+
+						printf("Nombre del art%cculo: \n%s \n", 161, articulos[i].articulo.c_str());
+
+						printf("A%co de lanzamiento: \n%d \n", 164, articulos[i].anio);
+
+						printf("G%cnero: \n%s \n", 130, articulos[i].genero.c_str());
+
+						printf("Clasificaci%cn: \n%s \n", 162, articulos[i].clasificacion.c_str());
+
+						printf("Consola: \n%s \n", articulos[i].consola.c_str());
+
+						printf("Caracter%csticas: \n%s \n", 161, articulos[i].caracteristicas.c_str());
+
+						printf("Descripci%cn: \n%s \n", 162, articulos[i].descripcion.c_str());
+
+						printf("Subtotal: \n%.2f \n", articulos[i].precio);
+
+						printf("Total: \n%.2f \n\n", articulos[i].total); //agregar algo que regrese al menú
+					}
+				}
+			}
+		}
+		if (valor == 2)
+		{
+			while (getchar() != '\n');
+
+			//Pide Consola a buscar
+			printf("\nIngrese clasificaci%cn que desea buscar: \n", 162);
+			getline(cin, buscador);
+
+			printf("Lista de art%cculos: \n", 161);
+
+			for (int i = 0; i < alta2; i++)
+			{
+				if (strcmp(buscador.c_str(), articulos[i].clasificacion.c_str()) == 0)
+				{
+					if (articulos[i].status == "ELIMINADO")
+					{
+						printf("REGISTRO ELIMINADO %d. \n", i + 1);
+					}
+					else
+					{
+						printf("Registro %d. \n", i + 1);
+
+						printf("N%cmero del art%cculo: \n%d \n", 163, 161, articulos[i].numero);
+
+						printf("Nombre del art%cculo: \n%s \n", 161, articulos[i].articulo.c_str());
+
+						printf("A%co de lanzamiento: \n%d \n", 164, articulos[i].anio);
+
+						printf("G%cnero: \n%s \n", 130, articulos[i].genero.c_str());
+
+						printf("Clasificaci%cn: \n%s \n", 162, articulos[i].clasificacion.c_str());
+
+						printf("Consola: \n%s \n", articulos[i].consola.c_str());
+
+						printf("Caracter%csticas: \n%s \n", 161, articulos[i].caracteristicas.c_str());
+
+						printf("Descripci%cn: \n%s \n", 162, articulos[i].descripcion.c_str());
+
+						printf("Subtotal: \n%.2f \n", articulos[i].precio);
+
+						printf("Total: \n%.2f \n\n", articulos[i].total);
+					}
+				}
+			}
+		}
+		if (valor == 3)
+		{
+			while (getchar() != '\n');
+
+			//Pide Consola a buscar
+			printf("\nIngrese consola que desea buscar: \n");
+			getline(cin, buscador);
+
+			printf("Lista de art%cculos: \n", 161);
+
+			for (int i = 0; i < alta2; i++)
+			{
+				if (strcmp(buscador.c_str(), articulos[i].consola.c_str()) == 0)
+				{
+					if (articulos[i].status == "ELIMINADO")
+					{
+						printf("REGISTRO ELIMINADO %d. \n", i + 1);
+					}
+					else
+					{
+						printf("Registro %d. \n", i + 1);
+
+						printf("N%cmero del art%cculo: \n%d \n", 163, 161, articulos[i].numero);
+
+						printf("Nombre del art%cculo: \n%s \n", 161, articulos[i].articulo.c_str());
+
+						printf("A%co de lanzamiento: \n%d \n", 164, articulos[i].anio);
+
+						printf("G%cnero: \n%s \n", 130, articulos[i].genero.c_str());
+
+						printf("Clasificaci%cn: \n%s \n", 162, articulos[i].clasificacion.c_str());
+
+						printf("Consola: \n%s \n", articulos[i].consola.c_str());
+
+						printf("Caracter%csticas: \n%s \n", 161, articulos[i].caracteristicas.c_str());
+
+						printf("Descripci%cn: \n%s \n", 162, articulos[i].descripcion.c_str());
+
+						printf("Subtotal: \n%.2f \n", articulos[i].precio);
+
+						printf("Total: \n%.2f \n\n", articulos[i].total);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		printf("Lista de art%cculos: \n", 161);
+		for (int i = 0; i < alta2; i++)
+		{
+			if (articulos[i].status == "ELIMINADO")
+			{
+				printf("REGISTRO ELIMINADO %d. \n", i + 1);
+			}
+			else
+			{
+				printf("Registro %d. \n", i + 1);
+
+				printf("N%cmero del art%cculo: \n%d \n", 163, 161, articulos[i].numero);
+
+				printf("Nombre del art%cculo: \n%s \n", 161, articulos[i].articulo.c_str());
+
+				printf("A%co de lanzamiento: \n%d \n", 164, articulos[i].anio);
+
+				printf("G%cnero: \n%s \n", 130, articulos[i].genero.c_str());
+
+				printf("Clasificaci%cn: \n%s \n", 162, articulos[i].clasificacion.c_str());
+
+				printf("Consola: \n%s \n", articulos[i].consola.c_str());
+
+				printf("Caracter%csticas: \n%s \n", 161, articulos[i].caracteristicas.c_str());
+
+				printf("Descripci%cn: \n%s \n", 162, articulos[i].descripcion.c_str());
+
+				printf("Subtotal: \n%.2f \n", articulos[i].precio);
+
+				printf("Total: \n%.2f \n\n", articulos[i].total);
+			}
+		}
+	}
+}
+
+
+void modificar() //modificar artículo
+{
+	int j, opcion, op2;
+	do
+	{
+		printf("Ingrese el n%cmero registro a modificar: \n", 163);
+		scanf_s("%d", &j);
+		j = j - 1; // esto debido a que i inicia en 0
+
+		for (int i = j; i == j; i++)
+		{
+			if ((articulos[i].status == "ELIMINADO"))
+			{
+				printf("REGISTRO ELIMINADO %d. \n", i + 1);
+				printf("\n");
+				printf("Ingrese un registro v%clido. \n", 160);
+				op2 = 1;
+			}
+			else
+			{
+				op2 = 2;
+			}
+		}
+	} while (op2 == 1);
+	printf("Ingrese que desea modificar: \n1.-N%cmero. \n2.-Nombre. \n3.-A%co. \n4.-G%cnero. \n5.-Clasificaci%cn. \n6.-Consola. \n7.-Caracter%csticas. \n8.-Descripci%cn. \n9.-Subtotal.\n", 163, 164, 130, 162, 161, 162); //checar q se puede modificar
+	scanf_s("%d", &opcion);
+
+	switch (opcion)
+	{
+	case 1:
+		for (int i = j; i == j; i++)
+		{
+			printf("Ingrese n%cmero del art%cculo.\n", 163, 161);
+			scanf_s("%d", &articulos[i].numero);
+		}
+		break;
+	case 2:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese nombre del art%cculo.\n", 161);
+			getline(cin, articulos[i].articulo);
+		}
+		break;
+
+	case 3:
+		for (int i = j; i == j; i++) //for solo funciona 1 vez
+		{
+			printf("Ingrese a%co de lanzamiento del art%cculo.\n", 164, 161);
+			scanf_s("%d", &articulos[i].anio);
+		}
+	case 4:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese g%cnero.\n", 130);
+			getline(cin, articulos[i].genero);
+		}
+		break;
+
+	case 5:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese clasificaci%cn.\n", 162);
+			getline(cin, articulos[i].clasificacion);
+		}
+		break;
+
+	case 6:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese consola.\n");
+			getline(cin, articulos[i].consola);
+		}
+		break;
+
+	case 7:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese caracter%csticas.\n", 161);
+			getline(cin, articulos[i].caracteristicas);
+		}
+		break;
+
+	case 8:
+		for (int i = j; i == j; i++)
+		{
+			while (getchar() != '\n');
+
+			printf("Ingrese descripci%cn del art%cculo.\n", 162, 161);
+			getline(cin, articulos[i].descripcion);
+		}
+		break;
+
+	case 9:
+		for (int i = j; i == j; i++)
+		{
+			printf("Ingrese precio unitario del art%cculo.\n", 161);
+			scanf_s("%f", &articulos[i].precio);
+
+			articulos[i].total = (articulos[i].precio * .16) + articulos[i].precio;
+
+			printf("El precio total es: \n %f \n", articulos[i].total); //si se cambia subtotal también el total debe cambiarse en automático
+		}
+		break;
+
+	}
+
+}
+
+void eliminar() //eliminar artículo 
+{
+	int j;
+	printf("Ingrese el  registro a eliminar: \n");
+	scanf_s("%d", &j);
+	j = j - 1;
+	for (int i = j; i == j; i++)
+	{
+		printf("Eliminando registro %d...", j + 1);
+		printf("\n");
+		articulos[i].status = "ELIMINADO";
+	}
+}
+
+void archivos() //hacer archivo
+{
+	ofstream archivo; //clase ifstream para leer archivos
+	string nombrearchivo;
+	int texto;
+	string texto2;
+
+	nombrearchivo = "Videojuegosymas.txt";  //nombre del archivo
+
+	archivo.open(nombrearchivo.c_str(), ios::out);
+
+	if (archivo.fail())
+	{
+		cout << "ERROR NO SE PUDO CREAR EL ARCHIVO.";
+		exit(1);
+	}
+
+	archivo << "No." << "\t" << "\t";
+	archivo << "Nombre." << "\t" << "\t";
+	archivo << "Fecha." << "\t" << "\t";
+	archivo << "Genero." << "\t" << "\t";
+	archivo << "Clasf." << "\t" << "\t";
+	archivo << "Consola." << "\t" << "\t";
+	archivo << "Caract." << "\t" << "\t";
+	archivo << "Subtotal." << "\t" << "\t";
+	archivo << "Total." << "\n";
+
+	for (int i = 0; i < alta2; i++)
+	{
+		if (articulos[i].status == "ELIMINADO")
+		{
+			texto2 = "REGISTRO ELIMINADO ";
+			texto = i;
+			archivo << texto2 << texto << "\n";
+		}
+		else
+		{
+			texto = articulos[i].numero;
+			archivo << texto << "\t" << "\t";
+			texto2 = articulos[i].articulo;
+			archivo << texto2 << "\t" << "\t";
+			texto = articulos[i].anio;
+			archivo << texto << "\t " << "\t";
+			texto2 = articulos[i].genero;
+			archivo << texto2 << "\t " << "\t";
+			texto2 = articulos[i].clasificacion;
+			archivo << texto2 << "\t " << "\t";
+			texto2 = articulos[i].consola;
+			archivo << texto2 << "\t " << "\t";
+			texto2 = articulos[i].caracteristicas;
+			archivo << texto2 << "\t " << "\t";
+			texto2 = articulos[i].descripcion;
+			archivo << texto2 << "\t " << "\t";
+			texto = articulos[i].precio;
+			archivo << texto << "\t " << "\t";
+			texto = articulos[i].total;
+			archivo << texto << "\t " << "\t";
+		}
+	}
+
+
+	archivo.close();
+}
